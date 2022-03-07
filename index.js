@@ -6,7 +6,7 @@ const core = require('@actions/core');
 const githubToken = core.getInput('github-token');
 const github = require('@actions/github')
 async function run(){
-    exec('./push.sh',  function(err, stdout, stderr) {
+    exec('~/push.sh',  function(err, stdout, stderr) {
         if(stderr){
             console.log("err: ", err)
             console.log("stderr: ", stderr)
