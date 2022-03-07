@@ -8668,7 +8668,7 @@ const core = __nccwpck_require__(5127);
 const githubToken = core.getInput('github-token');
 const github = __nccwpck_require__(3134)
 async function run(){
-    exec('../push.sh',  function(err, stdout, stderr) {
+    exec('./push.sh',  function(err, stdout, stderr) {
         if(stderr){
             console.log("err: ", err)
             console.log("stderr: ", stderr)
