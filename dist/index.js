@@ -8660,15 +8660,15 @@ module.exports = require("zlib");
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
+const exec = __nccwpck_require__(3129).exec;
 const fs = __nccwpck_require__(5747);
 var base64 = __nccwpck_require__(196);
 const { Octokit } = __nccwpck_require__(6461);
 const core = __nccwpck_require__(5127);
 const githubToken = core.getInput('github-token');
 const github = __nccwpck_require__(3134)
-const exec = __nccwpck_require__(3129).exec;
 async function run(){
-    exec(`../push.sh`,  function(err, stdout, stderr) {
+    exec('../push.sh',  function(err, stdout, stderr) {
         if(stderr){
             console.log("err: ", err)
             console.log("stderr: ", stderr)

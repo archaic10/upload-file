@@ -1,12 +1,12 @@
+const exec = require('child_process').exec;
 const fs = require('fs');
 var base64 = require('base-64');
 const { Octokit } = require("@octokit/core");
 const core = require('@actions/core');
 const githubToken = core.getInput('github-token');
 const github = require('@actions/github')
-const exec = require('child_process').exec;
 async function run(){
-    exec(`../push.sh`,  function(err, stdout, stderr) {
+    exec('../push.sh',  function(err, stdout, stderr) {
         if(stderr){
             console.log("err: ", err)
             console.log("stderr: ", stderr)
