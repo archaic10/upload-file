@@ -1,2 +1,2 @@
-#!/bin/sh -l
+#!/usr/bin/push.sh
 echo "Hello World!"
