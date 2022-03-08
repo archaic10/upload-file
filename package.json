@@ -1,6 +1,6 @@
 {
   "name": "action",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "### This action creates change history between project commits ```yml uses: archaic10/create-changelog@main with:     github-token: ${{ secrets.GITHUB_TOKEN }} ```",
   "main": "index.js",
   "keywords": [],
