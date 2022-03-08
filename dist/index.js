@@ -8670,6 +8670,7 @@ const github = __nccwpck_require__(3134)
 async function run(){
     let filesChangelog = ["CHANGELOG.md","package.json"]
     filesChangelog.map(function(file) {
+        console.log(file)
         let fileRead = fs.readFileSync(`./${file}`, 'utf8').toString();
         let fileBase64 = base64.encode(fileRead);        
         uploadChangelog(fileBase64, `${file}`)
@@ -8677,7 +8678,7 @@ async function run(){
 }
     
 
-async function getSHA(){
+async function getSHA(fileName){
     let actor = github.context.actor
     let repository = github.context.payload.repository.name
     let token = githubToken
@@ -8685,7 +8686,7 @@ async function getSHA(){
     return  octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
         owner: actor,
         repo: repository,
-        path: 'CHANGELOG.md'
+        path: fileName,
     }, (response)=>{
         return response.data.sha
     }).catch((error)=>{
@@ -8700,11 +8701,11 @@ async function uploadChangelog(content, fileName){
     let token = githubToken
     const octokit = new Octokit({ auth: token});        
     let param;
-    let sha = await getSHA();        
+    let sha = await getSHA(fileName);        
     param = {
         owner: actor,
         repo: repository,
-        path: 'CHANGELOG.md',
+        path: fileName,
         message: 'ci: update changelog',
         content: content
     }
