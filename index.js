@@ -12,13 +12,13 @@ async function run(){
             console.log("stderr: ", stderr)
             core.setFailed("Error: Não foi possível gerar o changelog");
         }else{
-            exec('auto-changelog -p',  function(err, stdout, stderr) {
+            exec('auto-changelog -p',  function(error, stdouts, stderrs) {
                 if(stderr){
-                    console.log("err: ", err)
-                    console.log("stderr: ", stderr)
+                    console.log("err: ", error)
+                    console.log("stderr: ", stderrs)
                     core.setFailed("Error: Não foi possível gerar o changelog");
                 }else{
-                    console.log("stdout: ", stdout)
+                    console.log("stdout: ", stdouts)
                     core.setOutput("changelog", "changelog gerado com sucesso");
                     let file = fs.readFileSync('./CHANGELOG.md', 'utf8').toString();
                     let fileBase64 = base64.encode(file);        
