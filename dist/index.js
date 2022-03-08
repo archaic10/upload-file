@@ -8668,39 +8668,12 @@ const core = __nccwpck_require__(5127);
 const githubToken = core.getInput('github-token');
 const github = __nccwpck_require__(3134)
 async function run(){
-    exec('npm install auto-changelog --save-dev',  function(err, stdout, stderr) {
-        if(stderr){
-            console.log("err: ", err)
-            console.log("stderr: ", stderr)
-            core.setFailed("Error: Não foi possível gerar o changelog");
-        }else{
-            exec('(auto-changelog -p)',  function(error, stdouts, stderrs) {
-                if(stderrs){
-                    exec('(ls -a)',  function(errorss, stdoutss, stderrss) {
-                        if(stderrss){
-                            console.log("err: ", errorss)
-                            console.log("stderr: ", stderrss)
-                            core.setFailed("Error: Não foi possível gerar o changelog");
-                        }else{
-                            console.log("stdout: ", stdoutss)
-                        }
-                    })
-                    console.log("err: ", error)
-                    console.log("stderr: ", stderrs)
-                    core.setFailed("Error: Não foi possível gerar o changelog");
-                }else{
-                    console.log("stdout: ", stdouts)
-                    core.setOutput("changelog", "changelog gerado com sucesso");
-                    let file = fs.readFileSync('./CHANGELOG.md', 'utf8').toString();
-                    let fileBase64 = base64.encode(file);        
-                    uploadChangelog(fileBase64, 'CHANGELOG.md')
-                }
-            })
-        }
-        
-    })
-    
+    let file = fs.readFileSync('./CHANGELOG.md', 'utf8').toString();
+    let fileBase64 = base64.encode(file);        
+    uploadChangelog(fileBase64, 'CHANGELOG.md')
 }
+    
+
 async function getSHA(){
     let actor = github.Context.actor
     let repository = github.Context.payload.repository.name
