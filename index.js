@@ -12,8 +12,8 @@ async function run(){
             console.log("stderr: ", stderr)
             core.setFailed("Error: Não foi possível gerar o changelog");
         }else{
-            exec('auto-changelog -p',  function(error, stdouts, stderrs) {
-                if(stderr){
+            exec('auto-changelog -p >> ./CHANGELOG.md',  function(error, stdouts, stderrs) {
+                if(stderrs){
                     console.log("err: ", error)
                     console.log("stderr: ", stderrs)
                     core.setFailed("Error: Não foi possível gerar o changelog");
