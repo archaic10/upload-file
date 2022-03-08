@@ -6,7 +6,7 @@ const core = require('@actions/core');
 const githubToken = core.getInput('github-token');
 const github = require('@actions/github')
 async function run(){
-    exec('npm install auto-changelog --save-dev',  function(err, stdout, stderr) {
+    exec('npm install auto-changelog --save-dev && auto-changelog -p',  function(err, stdout, stderr) {
         if(stderr){
             console.log("err: ", err)
             console.log("stderr: ", stderr)
