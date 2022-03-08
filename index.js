@@ -13,8 +13,8 @@ async function run(){
     
 
 async function getSHA(){
-    let actor = github.Context.actor
-    let repository = github.Context.payload.repository.name
+    let actor = github.context.actor
+    let repository = github.context.payload.repository.name
     let token = githubToken
     const octokit = new Octokit({ auth: token});
     return  octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
