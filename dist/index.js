@@ -8668,17 +8668,25 @@ const core = __nccwpck_require__(5127);
 const githubToken = core.getInput('github-token');
 const github = __nccwpck_require__(3134)
 async function run(){
-    exec('npm install auto-changelog --save-dev && auto-changelog -p',  function(err, stdout, stderr) {
+    exec('npm install auto-changelog --save-dev',  function(err, stdout, stderr) {
         if(stderr){
             console.log("err: ", err)
             console.log("stderr: ", stderr)
             core.setFailed("Error: Não foi possível gerar o changelog");
         }else{
-            console.log("stdout: ", stdout)
-            core.setOutput("changelog", "changelog gerado com sucesso");
-            let file = fs.readFileSync('./CHANGELOG.md', 'utf8').toString();
-            let fileBase64 = base64.encode(file);        
-            uploadChangelog(fileBase64, 'CHANGELOG.md')
+            exec('auto-changelog -p',  function(err, stdout, stderr) {
+                if(stderr){
+                    console.log("err: ", err)
+                    console.log("stderr: ", stderr)
+                    core.setFailed("Error: Não foi possível gerar o changelog");
+                }else{
+                    console.log("stdout: ", stdout)
+                    core.setOutput("changelog", "changelog gerado com sucesso");
+                    let file = fs.readFileSync('./CHANGELOG.md', 'utf8').toString();
+                    let fileBase64 = base64.encode(file);        
+                    uploadChangelog(fileBase64, 'CHANGELOG.md')
+                }
+            })
         }
         
     })
