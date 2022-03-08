@@ -8692,8 +8692,8 @@ async function getSHA(){
 
 }
 async function uploadChangelog(content, fileName){
-    let actor = github.Context.actor
-    let repository = github.payload.repository.name
+    let actor = github.context.actor
+    let repository = github.context.payload.repository.name
     let token = githubToken
     const octokit = new Octokit({ auth: token});        
     let param;
