@@ -8668,9 +8668,12 @@ const core = __nccwpck_require__(5127);
 const githubToken = core.getInput('github-token');
 const github = __nccwpck_require__(3134)
 async function run(){
-    let file = fs.readFileSync('./CHANGELOG.md', 'utf8').toString();
-    let fileBase64 = base64.encode(file);        
-    uploadChangelog(fileBase64, 'CHANGELOG.md')
+    let filesChangelog = ["CHANGELOG.md","package.json"]
+    filesChangelog.map(function(file) {
+        let fileRead = fs.readFileSync(`./${file}`, 'utf8').toString();
+        let fileBase64 = base64.encode(fileRead);        
+        uploadChangelog(fileBase64, `${file}`)
+    })
 }
     
 

@@ -6,9 +6,12 @@ const core = require('@actions/core');
 const githubToken = core.getInput('github-token');
 const github = require('@actions/github')
 async function run(){
-    let file = fs.readFileSync('./CHANGELOG.md', 'utf8').toString();
-    let fileBase64 = base64.encode(file);        
-    uploadChangelog(fileBase64, 'CHANGELOG.md')
+    let filesChangelog = ["CHANGELOG.md","package.json"]
+    filesChangelog.map(function(file) {
+        let fileRead = fs.readFileSync(`./${file}`, 'utf8').toString();
+        let fileBase64 = base64.encode(fileRead);        
+        uploadChangelog(fileBase64, `${file}`)
+    })
 }
     
 
