@@ -6,11 +6,15 @@ const core = require('@actions/core');
 const githubToken = core.getInput('github-token');
 const github = require('@actions/github')
 async function run(){
-    let filesChangelog = ["CHANGELOG.md","package.json"]
+    let filesChangelog = ["package.json", "changelog-temp.md"]
     filesChangelog.map(function(file) {
         console.log(file)
         let fileRead = fs.readFileSync(`./${file}`, 'utf8').toString();
-        let fileBase64 = base64.encode(fileRead);        
+        console.log(fileRead)
+        let fileBase64 = base64.encode(fileRead);
+        if(file == "changelog-temp.md")
+            file = file.replace("changelog-temp.md","CHANGELOG.md")
+        console.log("saida: ", file)
         uploadChangelog(fileBase64, `${file}`)
     })
 }
@@ -47,6 +51,8 @@ async function uploadChangelog(content, fileName){
         message: 'ci: update changelog',
         content: content
     }
+
+    console.log("Gerando arquivo: ", fileName)
     
     if(sha != 404 )
         param["sha"] = sha.data.sha;        
