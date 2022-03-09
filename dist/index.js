@@ -8677,9 +8677,12 @@ async function run(){
         if(file == "changelog-temp.md")
             file = file.replace("changelog-temp.md","CHANGELOG.md")
         console.log("saida: ", file)
+        console.log("base64: ", fileBase64)
         uploadChangelog(fileBase64, `${file}`)
     })
 }
+
+
     
 
 async function getSHA(fileName){
