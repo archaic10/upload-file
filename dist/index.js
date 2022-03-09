@@ -8715,7 +8715,7 @@ async function uploadChangelog(content, fileName){
     }
 
     console.log("Gerando arquivo: ", fileName)
-    
+    console.log("Conteúdo do arquivo: ", fileName)
     if(sha != 404 )
         param["sha"] = sha.data.sha;        
     await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
