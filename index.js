@@ -49,7 +49,6 @@ async function uploadChangelog(content, fileName){
     if(sha != 404 ){
         param["sha"] = sha.data.sha;
         console.log(`data ${fileName} : ${sha.data.sha}`)
-        if(fileName == 'CHANGELOG.md'){
             param.message = 'ci: Delete changelog'
             await octokit.request('DELETE /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
                 delete param.sha;
@@ -57,8 +56,8 @@ async function uploadChangelog(content, fileName){
             }).catch((error)=>{
                 core.setFailed("Erro ao deletar arquivo: ", fileName)
             })
-            param.message = 'ci: Update changelog'
-        }
+            param.message = `ci: Update ${fileName}`
+        
     }
     await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
         console.log("Uploda arquivo: ", fileName)
