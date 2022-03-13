@@ -8668,14 +8668,13 @@ const core = __nccwpck_require__(5127);
 const githubToken = core.getInput('github-token');
 const github = __nccwpck_require__(3134)
 async function run(){
-    let filesChangelog = ["package.json", "changelog-temp.md"]
+    let filesChangelog = ["package.json", "CHANGELOG.md"]
     filesChangelog.map(function(file) {
         console.log(file)
         let fileRead = fs.readFileSync(`./${file}`, 'utf8').toString();
         console.log(fileRead)
         let fileBase64 = base64.encode(fileRead);
-        if(file == "changelog-temp.md")
-            file = file.replace("changelog-temp.md","CHANGELOG.md")
+        // let fileBase64 = Buffer.from(fileRead, 'utf-8').toString('base64');
         console.log("saida: ", file)
         console.log("base64: ", fileBase64)
         uploadChangelog(fileBase64, `${file}`)
@@ -8719,8 +8718,17 @@ async function uploadChangelog(content, fileName){
 
     console.log("Gerando arquivo: ", fileName)
     console.log("Conteúdo do arquivo: ", content)
-    if(sha != 404 )
-        param["sha"] = sha.data.sha;        
+    if(sha != 404 ){
+        param["sha"] = sha.data.sha;
+        if(fileName == 'CHANGELOG.md'){
+            await octokit.request('DELETE /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
+                delete param.sha;
+                console.log("Deletando arquivo: ", fileName)
+            }).catch((error)=>{
+                console.log("Erro ao deletar arquivo: ", fileName)
+            })
+        }
+    }
     await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
         console.log({
             'statusCode':sha != 404 ? 200 : 201,
