@@ -1,4 +1,3 @@
-const exec = require('child_process').exec;
 const fs = require('fs');
 var base64 = require('base-64');
 const { Octokit } = require("@octokit/core");
@@ -79,9 +78,8 @@ async function uploadChangelog(content, fileName){
             }
         })
         
-    }).          
-    catch(function(error){   
-        console.log(error)
+    }).catch(function(error){
+        core.setFailed("Error ao commitar file: ",error);
     })
 }
 

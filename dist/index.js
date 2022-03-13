@@ -8495,14 +8495,6 @@ module.exports = require("assert");
 
 /***/ }),
 
-/***/ 3129:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("child_process");
-
-/***/ }),
-
 /***/ 8614:
 /***/ ((module) => {
 
@@ -8660,7 +8652,6 @@ module.exports = require("zlib");
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-const exec = __nccwpck_require__(3129).exec;
 const fs = __nccwpck_require__(5747);
 var base64 = __nccwpck_require__(196);
 const { Octokit } = __nccwpck_require__(6461);
@@ -8741,9 +8732,8 @@ async function uploadChangelog(content, fileName){
             }
         })
         
-    }).          
-    catch(function(error){   
-        console.log(error)
+    }).catch(function(error){
+        core.setFailed("Error ao commitar file: ",error);
     })
 }
 
