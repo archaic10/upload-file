@@ -54,7 +54,7 @@ async function uploadChangelog(content, fileName){
                 delete param.sha;
                 console.log("Deletando arquivo: ", fileName)
             }).catch((error)=>{
-                console.log("Erro ao deletar arquivo: ", fileName)
+                core.setFailed("Erro ao deletar arquivo: ", fileName)
             })
             param.message = 'ci: Update changelog'
         }
@@ -70,8 +70,6 @@ async function uploadChangelog(content, fileName){
             }
         })
         
-    }).catch(function(error){
-        core.setFailed("Error ao commitar file: ",error);
     })
 }
 
