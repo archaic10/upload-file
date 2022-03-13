@@ -8663,6 +8663,7 @@ async function run(){
     let filesChangelog = ["package.json", "CHANGELOG.md"]
     filesChangelog.map(function(file) {        
         let fileRead = fs.readFileSync(`./${file}`, 'utf8').toString();
+        console.log("content: ",fileRead)
         let fileBase64 = base64.encode(fileRead);
         uploadChangelog(fileBase64, `${file}`)
     })
@@ -8714,6 +8715,7 @@ async function uploadChangelog(content, fileName){
         }
     }
     await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
+        console.log("Uploda arquivo: ", fileName)
         console.log({
             'statusCode':sha != 404 ? 200 : 201,
             'headers': {
@@ -8724,6 +8726,8 @@ async function uploadChangelog(content, fileName){
             }
         })
         
+    }).catch(function(error){
+        console.log("Error ao commitar file: ",error);
     })
 }
 
