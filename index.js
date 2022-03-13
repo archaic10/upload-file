@@ -4,21 +4,15 @@ const { Octokit } = require("@octokit/core");
 const core = require('@actions/core');
 const githubToken = core.getInput('github-token');
 const github = require('@actions/github')
+
 async function run(){
     let filesChangelog = ["package.json", "CHANGELOG.md"]
-    filesChangelog.map(function(file) {
-        console.log(file)
+    filesChangelog.map(function(file) {        
         let fileRead = fs.readFileSync(`./${file}`, 'utf8').toString();
-        console.log(fileRead)
         let fileBase64 = base64.encode(fileRead);
-        console.log("saida: ", file)
-        console.log("base64: ", fileBase64)
         uploadChangelog(fileBase64, `${file}`)
     })
 }
-
-
-    
 
 async function getSHA(fileName){
     let actor = github.context.actor
@@ -52,8 +46,6 @@ async function uploadChangelog(content, fileName){
         content: content
     }
 
-    console.log("Gerando arquivo: ", fileName)
-    console.log("Conteúdo do arquivo: ", content)
     if(sha != 404 ){
         param["sha"] = sha.data.sha;
         if(fileName == 'CHANGELOG.md'){
