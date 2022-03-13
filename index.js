@@ -70,6 +70,8 @@ async function uploadChangelog(content, fileName){
             }
         })
         
+    }).catch(function(error){
+        console.log("Error ao commitar file: ",error);
     })
 }
 
