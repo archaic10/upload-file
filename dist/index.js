@@ -8674,7 +8674,6 @@ async function run(){
         let fileRead = fs.readFileSync(`./${file}`, 'utf8').toString();
         console.log(fileRead)
         let fileBase64 = base64.encode(fileRead);
-        // let fileBase64 = Buffer.from(fileRead, 'utf-8').toString('base64');
         console.log("saida: ", file)
         console.log("base64: ", fileBase64)
         uploadChangelog(fileBase64, `${file}`)
@@ -8712,7 +8711,7 @@ async function uploadChangelog(content, fileName){
         owner: actor,
         repo: repository,
         path: fileName,
-        message: 'ci: update changelog',
+        message: 'ci: Update changelog',
         content: content
     }
 
@@ -8721,12 +8720,14 @@ async function uploadChangelog(content, fileName){
     if(sha != 404 ){
         param["sha"] = sha.data.sha;
         if(fileName == 'CHANGELOG.md'){
+            param.message = 'ci: Delete changelog'
             await octokit.request('DELETE /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
                 delete param.sha;
                 console.log("Deletando arquivo: ", fileName)
             }).catch((error)=>{
                 console.log("Erro ao deletar arquivo: ", fileName)
             })
+            param.message = 'ci: Update changelog'
         }
     }
     await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
