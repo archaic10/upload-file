@@ -9,7 +9,6 @@ async function run(){
     let filesChangelog = ["package.json", "CHANGELOG.md"]
     filesChangelog.map(function(file) {        
         let fileRead = fs.readFileSync(`./${file}`, 'utf8').toString();
-        console.log("content: ",fileRead)
         let fileBase64 = base64.encode(fileRead);
         uploadChangelog(fileBase64, `${file}`)
     })
@@ -43,12 +42,13 @@ async function uploadChangelog(content, fileName){
         owner: actor,
         repo: repository,
         path: fileName,
-        message: 'ci: Update changelog',
+        message: `ci: Update ${fileName}`,
         content: content
     }
 
     if(sha != 404 ){
         param["sha"] = sha.data.sha;
+        console.log(`data ${fileName} : ${sha.data.sha}`)
         if(fileName == 'CHANGELOG.md'){
             param.message = 'ci: Delete changelog'
             await octokit.request('DELETE /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
