@@ -8699,7 +8699,7 @@ async function uploadChangelog(content, fileName){
         message: `ci: Update ${fileName}`,
         content: content
     }
-
+    console.log(`status: ${sha} file ${fileName}`)
     if(sha == 200 || fileName == 'package.json'){
         param["sha"] = sha.data.sha;
         console.log(`data ${fileName} : ${sha.data.sha}`)
