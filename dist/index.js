@@ -8700,7 +8700,7 @@ async function uploadChangelog(content, fileName){
         content: content
     }
     console.log(`status: ${sha} file ${fileName}`)
-    if(sha == 200 || fileName == 'package.json'){
+    if(sha != 404 || fileName == 'package.json'){
         param["sha"] = sha.data.sha;
         console.log(`data ${fileName} : ${sha.data.sha}`)
             param.message = 'ci: Delete changelog'
