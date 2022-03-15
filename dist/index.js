@@ -8700,10 +8700,9 @@ async function uploadChangelog(content, fileName){
         content: content
     }
 
-    if(sha != 404 ){
+    if(sha == 200 ){
         param["sha"] = sha.data.sha;
         console.log(`data ${fileName} : ${sha.data.sha}`)
-        
             param.message = 'ci: Delete changelog'
             await octokit.request('DELETE /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
                 delete param.sha;
