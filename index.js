@@ -59,17 +59,17 @@ async function loadContentBase64(){
     return param
 }
 
-async function recoveryShaConflict(error, param, fileName){
+async function recoveryShaConflict(error, param, fileName, content){
     console.log("Recovery sha conflict: ", fileName)
     let shaConflict = error.data.message;
     shaConflict.split('expected').pop()
     shaConflict = shaConflict.trim()
     console.log("Sha recovery: ", shaConflict)
     param["sha"] = shaConflict;
-    uploadFileBase64(param, fileName)
+    uploadFileBase64(param, fileName, content)
 }
 
-async function uploadFileBase64(param, fileName){
+async function uploadFileBase64(param, fileName, content){
     let token = githubToken
     const octokit = new Octokit({ auth: token})
     await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
@@ -86,7 +86,7 @@ async function uploadFileBase64(param, fileName){
         
     }).catch(function(error){
         console.log("Error ao commitar file: ",error);
-        recoveryShaConflict(error, param, fileName)
+        recoveryShaConflict(error, param, fileName, content)
     })
 }
 
@@ -98,7 +98,7 @@ async function uploadChangelog(content, fileName){
         console.log(`data ${fileName} : ${sha.data.sha}`)
         deleteOldFile(param, fileName)
     }
-    uploadFileBase64(param, fileName)
+    uploadFileBase64(param, fileName, content)
 }
 
 run()
