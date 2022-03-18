@@ -8697,7 +8697,7 @@ async function deleteOldFile(param, fileName){
     param.message = `ci: Update ${fileName}`
 }
 
-async function loadContentBase64(fileName){
+async function loadContentBase64(fileName, content){
     let actor = github.context.actor
     let repository = github.context.payload.repository.name
     let param;
@@ -8745,7 +8745,7 @@ async function uploadFileBase64(param, fileName, content){
 }
 
 async function uploadChangelog(content, fileName){
-    let param = await loadContentBase64(fileName)
+    let param = await loadContentBase64(fileName, content)
     console.log(`status: ${param.sha} file ${fileName}`)
     if(sha != 404 || fileName == 'package.json'){
         param["sha"] = param.sha.data.sha;
