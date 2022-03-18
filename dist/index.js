@@ -8747,7 +8747,7 @@ async function uploadFileBase64(param, fileName, content){
 async function uploadChangelog(content, fileName){
     let param = await loadContentBase64(fileName, content)
     console.log(`status: ${param.sha} file ${fileName}`)
-    if(sha != 404 || fileName == 'package.json'){
+    if(param.sha != 404 || fileName == 'package.json'){
         param["sha"] = param.sha.data.sha;
         console.log(`data ${fileName} : ${sha.data.sha}`)
         deleteOldFile(param, fileName)
