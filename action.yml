@@ -4,9 +4,12 @@ inputs:
   github-token:  # id of input
     description: 'Who to greet'
     required: true
+  file:  # id of input
+    description: 'file you want to send'
+    required: true
 outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+  success: # id of output
+    description: 'message success'
 runs:
   using: 'node12'
   main: 'dist/index.js'

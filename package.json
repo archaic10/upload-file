@@ -1,6 +1,6 @@
 {
   "name": "action",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "### This action creates change history between project commits",
   "main": "index.js",
   "keywords": [],
@@ -14,7 +14,8 @@
     "fs": "^0.0.1-security"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "changelog-v7": "auto-changelog -p"
   },
   "devDependencies": {
     "auto-changelog": "^2.4.0"

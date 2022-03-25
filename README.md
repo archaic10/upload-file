@@ -5,4 +5,5 @@
 uses: archaic10/new-changelog@main
 with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
+    file: changelog.md
 ```
