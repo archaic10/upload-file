@@ -8652,27 +8652,30 @@ module.exports = require("zlib");
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-const fs = __nccwpck_require__(5747);
-var base64 = __nccwpck_require__(196);
-const { Octokit } = __nccwpck_require__(6461);
-const core = __nccwpck_require__(5127);
-const githubToken = core.getInput('github-token');
+const fs = __nccwpck_require__(5747)
+var base64 = __nccwpck_require__(196)
+const { Octokit } = __nccwpck_require__(6461)
+const core = __nccwpck_require__(5127)
+const githubToken = core.getInput('github-token')
 const github = __nccwpck_require__(3134)
 
-async function run(){
-    let filesChangelog = ["package.json", "CHANGELOG.md"]
-    filesChangelog.map(function(file) {        
-        let fileRead = fs.readFileSync(`./${file}`, 'utf8').toString();
-        let fileBase64 = base64.encode(fileRead);
-        uploadChangelog(fileBase64, `${file}`)
-    })
+function run(){
+    if(githubToken){
+        let file = core.getInput('file')
+        if (file){
+            let fileRead = fs.readFileSync(`./${file}`, 'utf8').toString()
+            let fileBase64 = base64.encode(fileRead)
+            uploadGithub(fileBase64, `${file}`)
+        }else{
+            core.setFailed("Error: O parametro file não foi informado")
+        }
+    }else{
+        core.setFailed("Error: O parametro github-token não foi informado")
+    }
 }
-
-async function getSHA(fileName){
-    let actor = github.context.actor
-    let repository = github.context.payload.repository.name
-    let token = githubToken
-    const octokit = new Octokit({ auth: token});
+async function getSHA(actor, repository, fileName){
+    
+    const octokit = new Octokit({ auth: githubToken})
     return  octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
         owner: actor,
         repo: repository,
@@ -8684,15 +8687,19 @@ async function getSHA(fileName){
     })
 }
 
-async function deleteOldFile(param, fileName){
-    let token = githubToken
-    const octokit = new Octokit({ auth: token})
+async function deleteOldFile(param, fileName, callback){
+    
+    const octokit = new Octokit({ auth: githubToken})
     param.message = 'ci: Delete changelog'
     await octokit.request('DELETE /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
-        delete param.sha;
+        delete param.sha
         console.log("Deletando arquivo: ", fileName)
+        if(callback == "recoveryShaConflict")
+            uploadFileBase64(param, fileName) 
     }).catch((error)=>{
         console.log("Erro ao deletar arquivo: ", fileName)
+        console.log("Erro ao deletar arquivo error: ", error)
+        recoveryShaConflict(error, param, fileName, deleteOldFile.name)
     })
     param.message = `ci: Update ${fileName}`
 }
@@ -8700,8 +8707,8 @@ async function deleteOldFile(param, fileName){
 async function loadContentBase64(fileName, content){
     let actor = github.context.actor
     let repository = github.context.payload.repository.name
-    let param;
-    let sha = await getSHA(fileName);        
+    let param
+    let sha = await getSHA(actor, repository, fileName)        
     param = {
         owner: actor,
         repo: repository,
@@ -8713,46 +8720,57 @@ async function loadContentBase64(fileName, content){
     return param
 }
 
-async function recoveryShaConflict(error, param, fileName, content){
+async function recoveryShaConflict(error, param, fileName, callback){
     console.log("Recovery sha conflict: ", fileName)
-    let shaConflict = error.data.message;
-    shaConflict.split('expected').pop()
+    console.log("error recovery: ", error)
+    console.log("error recovery data: ", error.response.data)
+    let shaConflict = error.response.data.message
+    shaConflict = shaConflict.split('expected').pop()
     shaConflict = shaConflict.trim()
     console.log("Sha recovery: ", shaConflict)
-    param["sha"] = shaConflict;
-    uploadFileBase64(param, fileName, content)
+    param["sha"] = shaConflict
+    if (callback == "uploadFileBase64")
+        uploadFileBase64(param, fileName)
+    if(callback == "deleteOldFile"){
+        // deleteOldFile(param, fileName, recoveryShaConflict.name)
+        uploadFileBase64(param, fileName)
+    }
 }
 
-async function uploadFileBase64(param, fileName, content){
-    let token = githubToken
-    const octokit = new Octokit({ auth: token})
+async function uploadFileBase64(param, fileName){
+    
+    const octokit = new Octokit({ auth: githubToken})
     await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
         console.log("Uploda arquivo: ", fileName)
+        let message = param.sha != 404 ? 'Arquivo atualizado' : 'Arquivo criado'
         console.log({
-            'statusCode':sha != 404 ? 200 : 201,
+            'statusCode':param.sha != 404 ? 200 : 201,
             'headers': {
                 'Content-Type': 'application/json',
             },
             'body': {
-                'message': sha != 404 ? 'Arquivo atualizado' : 'Arquivo criado',
+                'message': message,
             }
         })
+        core.setOutput("success", message)
         
     }).catch(function(error){
-        console.log("Error ao commitar file: ",error);
-        recoveryShaConflict(error, param, fileName, content)
+        core.setFailed("Error ao commitar file: ",error)
+        // recoveryShaConflict(error, param, fileName, uploadGithub.name)
     })
 }
 
-async function uploadChangelog(content, fileName){
-    let param = await loadContentBase64(fileName, content)
-    console.log(`status: ${param.sha} file ${fileName}`)
+async function uploadGithub(content, fileName){
+    let param = await loadContentBase64(fileName, content)    
+    
     if(param.sha != 404 || fileName == 'package.json'){
-        param["sha"] = param.sha.data.sha;
-        console.log(`data ${fileName} : ${param.sha.data.sha}`)
-        deleteOldFile(param, fileName)
+        if(param.sha != 404)
+            param["sha"] = param.sha.data.sha
+        
+        
+        // deleteOldFile(param, fileName, uploadGithub.name)
     }
-    uploadFileBase64(param, fileName, content)
+    uploadFileBase64(param, fileName)
 }
 
 run()
