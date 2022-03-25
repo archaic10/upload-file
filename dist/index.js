@@ -8706,6 +8706,7 @@ async function deleteOldFile(param, fileName, callback){
 
 async function loadContentBase64(fileName, content){
     let actor = github.context.actor
+    console.log("context : ", github.context)
     let repository = github.context.payload.repository.name
     let param
     let sha = await getSHA(actor, repository, fileName)        
