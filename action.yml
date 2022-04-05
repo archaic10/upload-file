@@ -1,8 +1,8 @@
-name: 'Hello World'
-description: 'Greet someone and record the time'
+name: 'Upload file'
+description: 'This action sends the file to the repository, if the uploaded file exists the action will update the file, if it does not exist the action will create the file'
 inputs:
   github-token:  # id of input
-    description: 'Who to greet'
+    description: 'Personal access token to access the GitHub API'
     required: true
   file:  # id of input
     description: 'file you want to send'
