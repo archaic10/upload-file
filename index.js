@@ -19,11 +19,11 @@ function run(){
         core.setFailed("Error: O parametro github-token não foi informado")
     }
 }
-async function getSHA(actor, repository, fileName){
+async function getSHA(owner, repository, fileName){
     
     const octokit = new Octokit({ auth: githubToken})
     return  octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-        owner: actor,
+        owner: owner,
         repo: repository,
         path: fileName,
     }, (response)=>{
@@ -51,13 +51,12 @@ async function deleteOldFile(param, fileName, callback){
 }
 
 async function loadContentBase64(fileName, content){
-    let actor = github.context.actor
-    console.log("context : ", github.context)
+    let owner = github.context.payload.repository.owner.name
     let repository = github.context.payload.repository.name
     let param
-    let sha = await getSHA(actor, repository, fileName)        
+    let sha = await getSHA(owner, repository, fileName)        
     param = {
-        owner: actor,
+        owner: owner,
         repo: repository,
         path: fileName,
         message: `ci: Update ${fileName}`,
