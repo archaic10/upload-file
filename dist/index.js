@@ -8652,12 +8652,13 @@ module.exports = require("zlib");
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-const fs = __nccwpck_require__(5747)
-var base64 = __nccwpck_require__(196)
 const { Octokit } = __nccwpck_require__(6461)
-const core = __nccwpck_require__(5127)
-const githubToken = core.getInput('github-token')
 const github = __nccwpck_require__(3134)
+const core = __nccwpck_require__(5127)
+var base64 = __nccwpck_require__(196)
+const fs = __nccwpck_require__(5747)
+const githubToken = core.getInput('github-token')
+const branch = core.getInput('branch')
 
 function run(){
     if(githubToken){
@@ -8674,13 +8675,17 @@ function run(){
     }
 }
 async function getSHA(owner, repository, fileName){
-    
-    const octokit = new Octokit({ auth: githubToken})
-    return  octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+    let param = {
         owner: owner,
         repo: repository,
         path: fileName,
-    }, (response)=>{
+    }
+    if(branch && branch != ''){
+        param['ref'] = branch
+    }
+
+    const octokit = new Octokit({ auth: githubToken})
+    return  octokit.request('GET /repos/{owner}/{repo}/contents/{path}', param, (response)=>{
         return response.data.sha
     }).catch((error)=>{
         return error.status
@@ -8691,7 +8696,7 @@ async function deleteOldFile(param, fileName, callback){
     
     const octokit = new Octokit({ auth: githubToken})
     param.message = 'ci: Delete changelog'
-    await octokit.request('DELETE /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
+    await octokit.request('DELETE /repos/{owner}/{repo}/contents/{path}', param).then(()=>{
         delete param.sha
         console.log("Deletando arquivo: ", fileName)
         if(callback == "recoveryShaConflict")
@@ -8717,6 +8722,10 @@ async function loadContentBase64(fileName, content){
         content: content,
         sha: sha
     }
+    if(branch && branch != ''){
+        param['branch'] = branch
+    }
+
     return param
 }
 
@@ -8740,7 +8749,7 @@ async function recoveryShaConflict(error, param, fileName, callback){
 async function uploadFileBase64(param, fileName){
     
     const octokit = new Octokit({ auth: githubToken})
-    await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', param).then((res)=>{
+    await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', param).then(()=>{
         console.log("Uploda arquivo: ", fileName)
         let message = param.sha != 404 ? 'Arquivo atualizado' : 'Arquivo criado'
         console.log({
